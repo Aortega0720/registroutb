@@ -1,0 +1,7 @@
+Django==5.0.6
+psycopg2-binary
+pytest
+pytest-django
+pytest-html
+pytest-cov
+coverage
