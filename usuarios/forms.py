@@ -33,7 +33,6 @@ class RegistroForm(forms.ModelForm):
 
         return nombre
 
-
     # -------- VALIDAR APELLIDO --------
     def clean_last_name(self):
         apellido = self.cleaned_data['last_name']
@@ -45,18 +44,19 @@ class RegistroForm(forms.ModelForm):
 
         return apellido
 
-
-    # -------- VALIDAR CORREO ÚNICO --------
+    # -------- VALIDAR CORREO ÚNICO (MEJORADO) --------
     def clean_email(self):
-        email = self.cleaned_data['email']
+        email = self.cleaned_data.get('email')
 
-        if User.objects.filter(email=email).exists():
+        # Normalizar email
+        email = email.lower()
+
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError(
                 "El correo ya está registrado"
             )
 
         return email
-
 
     # -------- VALIDAR IDENTIFICACIÓN ÚNICA --------
     def clean_identificacion(self):
@@ -68,7 +68,6 @@ class RegistroForm(forms.ModelForm):
             )
 
         return identificacion
-
 
     # -------- VALIDAR CONTRASEÑA --------
     def clean_password(self):
@@ -100,7 +99,6 @@ class RegistroForm(forms.ModelForm):
             )
 
         return password
-
 
     # -------- CONFIRMAR CONTRASEÑA --------
     def clean(self):

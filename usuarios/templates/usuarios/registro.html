@@ -15,23 +15,34 @@
       <form method="post" novalidate>
         {% csrf_token %}
 
+        <!-- ERRORES GENERALES -->
+        {% if form.errors %}
+          <div class="errores">
+            {% for field in form %}
+              {% for error in field.errors %}
+                <p class="error-text">{{ error }}</p>
+              {% endfor %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <label>Nombre</label>
-        {{ form.first_name }} {{ form.first_name.errors }}
+        {{ form.first_name }}
 
         <label>Apellido</label>
-        {{ form.last_name }} {{ form.last_name.errors }}
+        {{ form.last_name }}
 
         <label>Correo</label>
-        {{ form.email }} {{ form.email.errors }}
+        {{ form.email }}
 
         <label>Identificación</label>
-        {{ form.identificacion }} {{ form.identificacion.errors }}
+        {{ form.identificacion }}
 
         <label>Contraseña</label>
-        {{ form.password }} {{ form.password.errors }}
+        {{ form.password }}
 
         <label>Confirmar contraseña</label>
-        {{ form.confirmar_password }} {{ form.confirmar_password.errors }}
+        {{ form.confirmar_password }}
 
         <button type="submit">Registrarse</button>
       </form>

@@ -25,6 +25,12 @@ services:
       - "8000:8000"
     depends_on:
       - db
-
+      - selenium 
+  selenium:
+    image: selenium/standalone-chrome
+    container_name: selenium
+    ports:
+      - "4444:4444"
+    shm_size: 2gb 
 volumes:
   postgres_data:

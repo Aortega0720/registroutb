@@ -5,3 +5,6 @@ pytest-django
 pytest-html
 pytest-cov
 coverage
+selenium
+webdriver-manager
+matplotlib
