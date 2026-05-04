@@ -30,7 +30,6 @@ logger = logging.getLogger(__name__)
 BASE_URL = "http://web:8000/registro/"
 
 
-# ---------- UTILIDADES ----------
 def esperar_servidor():
     """Espera hasta que Django esté disponible."""
     for _ in range(20):
@@ -102,7 +101,6 @@ def datos_validos():
     }
 
 
-# ---------- CP1 ----------
 def test_cp1_registro_exitoso(driver):
     data = datos_validos()
 
@@ -125,7 +123,7 @@ def test_cp1_registro_exitoso(driver):
     assert ok
 
 
-# ---------- CP2 ----------
+
 def test_cp2_password_insuficiente(driver):
     data = datos_validos()
     data["password"] = "123"
@@ -150,7 +148,7 @@ def test_cp2_password_insuficiente(driver):
     assert ok
 
 
-# ---------- CP3 ----------
+
 def test_cp3_identificacion_duplicada(driver):
     data = datos_validos()
 
@@ -179,7 +177,7 @@ def test_cp3_identificacion_duplicada(driver):
     assert ok
 
 
-# ---------- CP4 ----------
+
 def test_cp4_campos_vacios(driver):
     driver.get(BASE_URL)
     esperar_formulario(driver)
@@ -200,7 +198,7 @@ def test_cp4_campos_vacios(driver):
     assert ok
 
 
-# ---------- CP5 ----------
+
 def test_cp5_sql_injection(driver):
     data = datos_validos()
     data["first_name"] = "'; DROP TABLE users; --"
@@ -224,7 +222,7 @@ def test_cp5_sql_injection(driver):
     assert ok
 
 
-# ---------- CP6 ----------
+
 def test_cp6_prevencion_spam(driver):
     data = datos_validos()
 
