@@ -22,7 +22,6 @@ class RegistroForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'email', 'password']
 
-    # -------- VALIDAR NOMBRE --------
     def clean_first_name(self):
         nombre = self.cleaned_data['first_name']
 
@@ -33,7 +32,6 @@ class RegistroForm(forms.ModelForm):
 
         return nombre
 
-    # -------- VALIDAR APELLIDO --------
     def clean_last_name(self):
         apellido = self.cleaned_data['last_name']
 
@@ -44,7 +42,6 @@ class RegistroForm(forms.ModelForm):
 
         return apellido
 
-    # -------- VALIDAR CORREO ÚNICO (MEJORADO) --------
     def clean_email(self):
         email = self.cleaned_data.get('email')
 
@@ -58,7 +55,6 @@ class RegistroForm(forms.ModelForm):
 
         return email
 
-    # -------- VALIDAR IDENTIFICACIÓN ÚNICA --------
     def clean_identificacion(self):
         identificacion = self.cleaned_data['identificacion']
 
@@ -69,7 +65,6 @@ class RegistroForm(forms.ModelForm):
 
         return identificacion
 
-    # -------- VALIDAR CONTRASEÑA --------
     def clean_password(self):
         password = self.cleaned_data['password']
 
@@ -100,7 +95,6 @@ class RegistroForm(forms.ModelForm):
 
         return password
 
-    # -------- CONFIRMAR CONTRASEÑA --------
     def clean(self):
         cleaned_data = super().clean()
 
