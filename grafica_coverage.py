@@ -1,4 +1,5 @@
 import json
+import os
 import matplotlib.pyplot as plt
 
 # Leer coverage
@@ -22,7 +23,8 @@ plt.ylabel("Cobertura (%)")
 plt.title("Cobertura por archivo")
 plt.tight_layout()
 
-# 👇 FORZAR GUARDADO ABSOLUTO
-plt.savefig("/app/grafica_coverage.png")
+# Guardar en el directorio donde se ejecuta el script
+output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "grafica_coverage.png")
+plt.savefig(output_path)
 
-print("✅ Imagen guardada en /app/grafica_coverage.png")
+print(f"Imagen guardada en {output_path}")

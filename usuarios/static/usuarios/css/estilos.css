@@ -49,6 +49,10 @@ input:focus{
     box-shadow:0 0 5px rgba(79,172,254,0.4);
 }
 
+input.error{
+    border-color:#d93025;
+}
+
 button{
     width:100%;
     padding:12px;
@@ -91,21 +95,4 @@ button:hover{
 
 .errorlist li{
     margin:0;
-}
-
-input{
-    width:100%;
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-    margin-bottom:3px;
-}
-
-input:focus{
-    border-color:#4facfe;
-    outline:none;
-}
-
-input.error{
-    border-color:#d93025;
 }

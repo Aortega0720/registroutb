@@ -42,7 +42,7 @@ def limpiar_errores(form):
 @pytest.mark.django_db
 def test_registro_usuario_valido(client):
     data = generar_datos_validos()
-    response = client.post("/registro/", data)
+    client.post("/registro/", data)
 
     creado = User.objects.filter(email=data["email"]).exists()
 
@@ -135,11 +135,100 @@ def test_campos_vacios(client):
 
 
 @pytest.mark.django_db
+def test_formulario_get(client):
+    """GET al formulario retorna 200 y el contexto incluye el form."""
+    response = client.get("/registro/")
+
+    registrar_backend(
+        "Formulario GET",
+        "HTTP 200 con form",
+        f"HTTP {response.status_code}",
+        "N/A"
+    )
+
+    assert response.status_code == 200
+    assert "form" in response.context
+
+
+@pytest.mark.django_db
+def test_passwords_no_coinciden(client):
+    """Contraseñas distintas generan error de validación."""
+    data = generar_datos_validos()
+    data["confirmar_password"] = "OtraPass@999"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Passwords no coinciden",
+        "Error de validación",
+        limpiar_errores(response.context["form"]),
+        "Validar coincidencia"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_nombre_invalido(client):
+    """Nombre con dígitos genera error de validación."""
+    data = generar_datos_validos()
+    data["first_name"] = "Juan123"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Nombre inválido",
+        "Error en nombre",
+        limpiar_errores(response.context["form"]),
+        "Solo letras permitidas"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_apellido_invalido(client):
+    """Apellido con caracteres especiales genera error de validación."""
+    data = generar_datos_validos()
+    data["last_name"] = "Perez!"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Apellido inválido",
+        "Error en apellido",
+        limpiar_errores(response.context["form"]),
+        "Solo letras permitidas"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_registro_exitoso_renderiza_plantilla(client):
+    """Registro válido renderiza la plantilla de confirmación."""
+    data = generar_datos_validos()
+    response = client.post("/registro/", data)
+
+    plantilla = response.templates[0].name if response.templates else "Sin plantilla"
+
+    registrar_backend(
+        "Plantilla registro exitoso",
+        "registro_exitoso.html",
+        plantilla,
+        "N/A"
+    )
+
+    assert response.status_code == 200
+    assert any("registro_exitoso" in t.name for t in response.templates)
+
+
+@pytest.mark.django_db
 def test_sql_injection(client):
     data = generar_datos_validos()
     data["first_name"] = "'; DROP TABLE users; --"
 
-    response = client.post("/registro/", data)
+    client.post("/registro/", data)
 
     creado = User.objects.filter(email=data["email"]).exists()
 
@@ -151,4 +240,100 @@ def test_sql_injection(client):
     )
 
     assert not creado
+
+
+@pytest.mark.django_db
+def test_password_sin_mayuscula(client):
+    """Contraseña sin mayúscula genera error de validación."""
+    data = generar_datos_validos()
+    data["password"] = "admin@123"
+    data["confirmar_password"] = "admin@123"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Password sin mayúscula",
+        "Error de contraseña",
+        limpiar_errores(response.context["form"]),
+        "Exigir al menos una mayúscula"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_password_sin_caracter_especial(client):
+    """Contraseña sin carácter especial genera error de validación."""
+    data = generar_datos_validos()
+    data["password"] = "Admin1234"
+    data["confirmar_password"] = "Admin1234"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Password sin carácter especial",
+        "Error de contraseña",
+        limpiar_errores(response.context["form"]),
+        "Exigir al menos un carácter especial"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_password_sin_minuscula(client):
+    """Contraseña sin letra minúscula genera error de validación."""
+    data = generar_datos_validos()
+    data["password"] = "ADMIN@123"
+    data["confirmar_password"] = "ADMIN@123"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Password sin minúscula",
+        "Error de contraseña",
+        limpiar_errores(response.context["form"]),
+        "Exigir al menos una minúscula"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_password_sin_numero(client):
+    """Contraseña sin número genera error de validación."""
+    data = generar_datos_validos()
+    data["password"] = "Admin@abc"
+    data["confirmar_password"] = "Admin@abc"
+
+    response = client.post("/registro/", data)
+
+    registrar_backend(
+        "Password sin número",
+        "Error de contraseña",
+        limpiar_errores(response.context["form"]),
+        "Exigir al menos un dígito"
+    )
+
+    assert response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_perfil_str():
+    """El método __str__ de Perfil retorna el username del usuario."""
+    user = User.objects.create_user(
+        username="strtest@test.com",
+        email="strtest@test.com",
+        password=PASSWORD_VALIDA
+    )
+    perfil = Perfil.objects.create(user=user, identificacion="99999999")
+
+    registrar_backend(
+        "Perfil __str__",
+        "strtest@test.com",
+        str(perfil),
+        "N/A"
+    )
+
+    assert str(perfil) == "strtest@test.com"
 

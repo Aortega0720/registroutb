@@ -3,6 +3,13 @@ from django.contrib.auth.models import User
 from .models import Perfil
 import re
 
+_PASSWORD_RULES = [
+    (r"[A-Z]", "Debe contener al menos una letra mayúscula"),
+    (r"[a-z]", "Debe contener al menos una letra minúscula"),
+    (r"\d",    "Debe contener al menos un número"),
+    (r'[!@#$%^&*(),.?":{}|<>]', "Debe contener al menos un carácter especial"),
+]
+
 
 class RegistroForm(forms.ModelForm):
 
@@ -73,25 +80,9 @@ class RegistroForm(forms.ModelForm):
                 "La contraseña debe tener mínimo 6 caracteres"
             )
 
-        if not re.search(r"[A-Z]", password):
-            raise forms.ValidationError(
-                "Debe contener al menos una letra mayúscula"
-            )
-
-        if not re.search(r"[a-z]", password):
-            raise forms.ValidationError(
-                "Debe contener al menos una letra minúscula"
-            )
-
-        if not re.search(r"[0-9]", password):
-            raise forms.ValidationError(
-                "Debe contener al menos un número"
-            )
-
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-            raise forms.ValidationError(
-                "Debe contener al menos un carácter especial"
-            )
+        for pattern, message in _PASSWORD_RULES:
+            if not re.search(pattern, password):
+                raise forms.ValidationError(message)
 
         return password
 
