@@ -32,7 +32,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Requerido por SonarCloud para análisis de ramas
+        fetch-depth: 0
 
     - name: Configurar Python
       uses: actions/setup-python@v5
@@ -42,11 +42,11 @@ jobs:
     - name: Instalar dependencias
       run: pip install -r requirements.txt
 
-    - name: Ejecutar pruebas unitarias (sin Selenium)
+    - name: Ejecutar pruebas unitarias
       run: |
         pytest usuarios/tests/test_registro.py \
           --cov=usuarios \
-          --cov-report=xml \
+          --cov-report=xml:coverage.xml \
           --cov-report=term-missing \
           --cov-fail-under=90 \
           -v
@@ -58,7 +58,7 @@ jobs:
         path: coverage.xml
 
     - name: Análisis SonarCloud
-      uses: uses: SonarSource/sonarqube-scan-action@v5
+      uses: SonarSource/sonarqube-scan-action@v5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
