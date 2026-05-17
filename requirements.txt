@@ -7,4 +7,5 @@ pytest-cov
 coverage
 selenium
 webdriver-manager
+requests
 matplotlib

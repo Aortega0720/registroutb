@@ -29,6 +29,10 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "http://web:8000/registro/"
 
+RESULTADO_FALLO = "Falló"
+RESULTADO_OK = "Exitoso"
+RESULTADO_ERROR = "Error detectado"
+
 
 def esperar_servidor():
     """Espera hasta que Django esté disponible."""
@@ -116,7 +120,7 @@ def test_cp1_registro_exitoso(driver):
     registrar_ui(
         "CP1 Registro exitoso",
         "Registro correcto",
-        "Exitoso" if ok else "Falló",
+        RESULTADO_OK if ok else RESULTADO_FALLO,
         "N/A"
     )
 
@@ -141,7 +145,7 @@ def test_cp2_password_insuficiente(driver):
     registrar_ui(
         "CP2 Password insuficiente",
         "Mostrar error",
-        "Error detectado" if ok else "Falló",
+        RESULTADO_ERROR if ok else RESULTADO_FALLO,
         "Validar reglas de contraseña"
     )
 
@@ -170,7 +174,7 @@ def test_cp3_identificacion_duplicada(driver):
     registrar_ui(
         "CP3 Identificación duplicada",
         "Mostrar error",
-        "Error detectado" if ok else "Falló",
+        RESULTADO_ERROR if ok else RESULTADO_FALLO,
         "Validación correcta"
     )
 
@@ -191,7 +195,7 @@ def test_cp4_campos_vacios(driver):
     registrar_ui(
         "CP4 Campos vacíos",
         "Mostrar errores",
-        "Error detectado" if ok else "Falló",
+        RESULTADO_ERROR if ok else RESULTADO_FALLO,
         "Validar campos obligatorios"
     )
 
